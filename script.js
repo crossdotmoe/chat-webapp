@@ -1,113 +1,44 @@
-// HTML elements
-const chatWindow = document.getElementById('chat-window');
-const usernameInput = document.getElementById('username-input');
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
+const socket = io('https://chat-webapp.crossdotmoe.workers.dev/'); // Replace with the actual URL of your Cloudflare Worker.
 
-// Store the user's username
-let username = '';
+socket.on('connect', () => {
+  console.log('Connected to the server.');
 
-// WebRTC related variables
-const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-const peerConnection = new RTCPeerConnection(configuration);
-const dataChannel = peerConnection.createDataChannel('chat');
+  // Handle chat messages and other WebSocket events here.
+  socket.on('chat', (data) => {
+    appendMessage(data.sender, data.message);
+  });
 
-dataChannel.onopen = () => {
-    // Data channel is open; you can start sending and receiving messages
-};
+  // Handle other events here.
+});
 
-dataChannel.onmessage = (event) => {
-    // Handle incoming chat messages
-    const message = event.data;
-    appendMessage(username, message);
-};
+socket.on('disconnect', () => {
+  console.log('Disconnected from the server.');
+});
 
-// WebSocket for signaling
-const signalingSocket = new WebSocket('wss://your-signaling-server-url.com');
-
-signalingSocket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-
-    if (data.type === 'offer') {
-        handleOffer(data);
-    } else if (data.type === 'answer') {
-        handleAnswer(data);
-    } else if (data.type === 'candidate') {
-        handleCandidate(data);
-    }
-};
+// Get references to the HTML elements by their IDs
+const usernameInput = document.getElementById('username');
+const messageInput = document.getElementById('message');
+const sendButton = document.getElementById('send');
+const chatWindow = document.getElementById('chat'); // Define chatWindow
 
 // Handle sending chat messages
 sendButton.addEventListener('click', () => {
-    const message = messageInput.value;
-    if (message && username) {
-        dataChannel.send(message);
-        appendMessage('You', message);
-        messageInput.value = '';
-    }
+  const message = messageInput.value;
+  if (message && username) {
+    socket.emit('chat', { sender: username, message });
+    appendMessage(username , message);
+    messageInput.value = '';
+  }
+});
+
+// Set the user's username
+usernameInput.addEventListener('input', (event) => {
+  username = event.target.value;
 });
 
 // Function to append a message to the chat window
 function appendMessage(sender, message) {
-    const messageElement = document.createElement('p');
-    messageElement.textContent = `${sender}: ${message}`;
-    chatWindow.appendChild(messageElement);
+  const messageElement = document.createElement('p');
+  messageElement.textContent = `${sender}: ${message}`;
+  chatWindow.appendChild(messageElement);
 }
-
-// Set the user's username
-usernameInput.addEventListener('input', (event) => {
-    username = event.target.value;
-});
-
-// Function to send an offer to another user
-function sendOffer(targetUsername) {
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-
-    signalingSocket.send(JSON.stringify({
-        type: 'offer',
-        target: targetUsername,
-        offer: offer,
-    }));
-}
-
-// Function to handle an incoming offer from another user
-function handleOffer(offerData) {
-    // Handle the offer and set the remote description
-}
-
-// Function to send an answer to another user
-function sendAnswer(targetUsername) {
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    signalingSocket.send(JSON.stringify({
-        type: 'answer',
-        target: targetUsername,
-        answer: answer,
-    }));
-}
-
-// Function to handle an incoming answer from another user
-function handleAnswer(answerData) {
-    // Handle the answer and set the remote description
-}
-
-// Function to send ICE candidates to another user
-function sendICECandidate(targetUsername, candidate) {
-    signalingSocket.send(JSON.stringify({
-        type: 'candidate',
-        target: targetUsername,
-        candidate: candidate,
-    }));
-}
-
-// Function to handle an incoming ICE candidate from another user
-function handleCandidate(candidateData) {
-    // Handle the ICE candidate
-}
-
-// Connect to your signaling server
-signalingSocket.addEventListener('open', () => {
-    // Implement the logic to join the chat and negotiate connections here
-});
