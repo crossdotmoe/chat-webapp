@@ -25,7 +25,8 @@ const chatWindow = document.getElementById('chat'); // Define chatWindow
 sendButton.addEventListener('click', () => {
   const message = messageInput.value;
   if (message && username) {
-    socket.emit('chat', { sender: username, message });
+    const sid = socket.id;
+    socket.emit('chat', { sid, sender: username, message });
     appendMessage(username , message);
     messageInput.value = '';
   }

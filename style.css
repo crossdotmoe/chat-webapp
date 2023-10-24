@@ -1,20 +1,23 @@
+/* Reset some default styles and set a background color */
 body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
-  }
-  
-  #chat-container {
+}
+
+/* Center the chat container and style it */
+#chat-container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  #chat {
+}
+
+/* Style the chat area with a scrollbar */
+#chat {
     height: 300px;
     overflow-y: auto;
     border: 1px solid #ccc;
@@ -22,52 +25,67 @@ body {
     border-radius: 5px;
     margin-bottom: 10px;
     background-color: #f9f9f9;
-  }
-  
-  #user-input {
+}
+
+/* Display user input in a flex layout */
+#user-input {
     display: flex;
-  }
-  
-  input[type="text"] {
-    flex: 1;
+    flex-wrap: wrap; /* Allow content to wrap to the next line */
+    margin-bottom: 10px; /* Add some space between chat and user input */
+}
+
+/* Style the text input fields */
+input[type="text"] {
+    flex: 1; /* Expand to fill available space */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-right: 10px;
-  }
-  
-  #send {
+    margin: 5px; /* Add spacing between input elements */
+}
+
+/* Style the send button */
+#send {
     background-color: #007bff;
     color: #fff;
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  #send:hover {
+    flex: 1; /* Expand to fill available space */
+    margin: 5px; /* Add spacing between input elements */
+}
+
+/* Highlight the send button on hover */
+#send:hover {
     background-color: #0056b3;
-  }
-  
-  footer {
+}
+
+/* Style the footer text */
+footer {
     text-align: center;
     margin-top: 20px;
     color: #666;
-  }
-  
-  /* Responsive styles for smaller screens */
-  @media (max-width: 600px) {
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 776px) {
+    /* Reduce padding for smaller screens */
     #chat-container {
-      padding: 10px;
+        padding: 10px;
     }
-  
+
+    /* Stack user input fields in a column for smaller screens */
     #user-input {
-      flex-direction: column;
+        flex-direction: column;
     }
-  
+
+    /* Remove right margin for text input fields and add bottom margin */
     input[type="text"] {
-      margin-right: 0;
-      margin-bottom: 10px;
+        margin: 5px 0;
     }
-  }
-  
+
+    /* Adjust the send button's width for smaller screens */
+    #send {
+        width: 100%;
+    }
+}
