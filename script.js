@@ -26,7 +26,7 @@ sendButton.addEventListener('click', () => {
   const message = messageInput.value;
   if (message && username) {
     const sid = socket.id;
-    socket.emit('chat', { sid, sender: username, message });
+    socket.emit('chat', { sid: socket.id, sender: username, message });
     appendMessage(username , message);
     messageInput.value = '';
   }
